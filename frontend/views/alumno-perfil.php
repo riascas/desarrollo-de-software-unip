@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../includes/base-url.php';
 require_once __DIR__ . '/../../controllers/AlumnoController.php';
 $alumnoController = new AlumnoController();
 
@@ -21,6 +22,26 @@ if (!$alumno['success']) {
     exit();
 }
 $alumno = $alumno['body'];
+$alumnoDAO = new AlumnoDAO();
+$postulacionesProgress = $alumnoDAO->getPostulaciones($_SESSION['user']['user_id']) ?: [];
+$suscripcionesProgress = $alumnoDAO->getSuscripciones($_SESSION['user']['user_id']) ?: [];
+
+$progressItems = [
+    ['label' => 'Datos de contacto', 'complete' => $alumno->getEmail() && $alumno->getTelefono() && $alumno->getUbicacion(), 'weight' => 25, 'url' => BASE_URL . 'views/alumno-editar-perfil.php'],
+    ['label' => 'Foto de perfil', 'complete' => $alumno->getFotoPerfil(), 'weight' => 10, 'url' => BASE_URL . 'views/alumno-editar-perfil.php'],
+    ['label' => 'Descripción profesional', 'complete' => $alumno->getDescripcion(), 'weight' => 10, 'url' => BASE_URL . 'views/alumno-editar-perfil.php'],
+    ['label' => 'Carrera', 'complete' => $alumno->getCarrera(), 'weight' => 10, 'url' => BASE_URL . 'views/alumno-editar-perfil.php'],
+    ['label' => 'Habilidades', 'complete' => count($alumno->getHabilidades()) > 0, 'weight' => 10, 'url' => BASE_URL . 'views/alumno-editar-perfil.php'],
+    ['label' => 'Avance académico', 'complete' => count($alumno->getMateriasAprobadas()) > 0, 'weight' => 10, 'url' => BASE_URL . 'views/alumno-perfil.php'],
+    ['label' => 'Primera postulación', 'complete' => count($postulacionesProgress) > 0, 'weight' => 15, 'url' => BASE_URL . 'views/alumno-empleos.php'],
+    ['label' => 'Suscripción a un evento', 'complete' => count($suscripcionesProgress) > 0, 'weight' => 10, 'url' => BASE_URL . 'views/alumno-eventos.php']
+];
+$progress = array_reduce($progressItems, function ($total, $item) {
+    return $total + ($item['complete'] ? $item['weight'] : 0);
+}, 0);
+$pendingProgressItems = array_filter($progressItems, function ($item) {
+    return !$item['complete'];
+});
 
 function mostrarValor($valor, $mensaje = 'No disponible')
 {
@@ -60,6 +81,28 @@ function mostrarValor($valor, $mensaje = 'No disponible')
                     <?php } ?>
                 </div>
             </div>
+
+            <section class="alumno-progress-item mb-5" aria-labelledby="progresoPerfil">
+                <div class="alumno-progress-header">
+                    <h2 id="progresoPerfil">Progreso del perfil</h2>
+                    <strong><?php echo $progress; ?>%</strong>
+                </div>
+                <div class="progress" role="progressbar" aria-label="Progreso del perfil" aria-valuenow="<?php echo $progress; ?>" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar" style="width: <?php echo $progress; ?>%"></div>
+                </div>
+                <details class="alumno-progress-details">
+                    <summary><?php echo count($pendingProgressItems) > 0 ? 'Ver próximos pasos' : 'Perfil completo'; ?></summary>
+                    <?php if (count($pendingProgressItems) > 0): ?>
+                        <ul>
+                            <?php foreach ($pendingProgressItems as $item): ?>
+                                <li><a href="<?php echo $item['url']; ?>"><?php echo htmlspecialchars($item['label']); ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>Completaste todos los objetivos disponibles.</p>
+                    <?php endif; ?>
+                </details>
+            </section>
 
             <div class="contact-info mb-5">
                 <div class="info-item mb-4">

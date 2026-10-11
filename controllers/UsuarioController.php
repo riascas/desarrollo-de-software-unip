@@ -96,7 +96,7 @@ class UsuarioController {
 
         $usuario = $this->usuarioDao->iniciarSesion($email, $password);
 
-        if ($usuario) {
+        if ($usuario && isset($usuario['user_id'], $usuario['user_type'])) {
             return [
                 'success' => true,
                 'message' => 'Inicio de sesión exitoso',
@@ -106,7 +106,7 @@ class UsuarioController {
             return [
                 'status_code' => 401,
                 'success' => false,
-                'message' => 'Credenciales incorrectas',
+                'message' => $usuario['error'] ?? 'Credenciales incorrectas',
             ];
         }
     }

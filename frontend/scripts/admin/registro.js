@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function registrarse(userData) {
         try {
-            const response = await fetch(`/TP-Programacion-WEB/controllers/AdministradorController.php?endpoint=register`, {
+            const response = await fetch(`http://localhost:8000/controllers/AdministradorController.php?endpoint=register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

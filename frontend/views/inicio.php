@@ -8,7 +8,7 @@
         $resultado = $usuarioController->iniciarSesion();
         if ($resultado['success']) {
             $_SESSION['user'] = $resultado['usuario'];
-            switch ($resultado['usuario']['user_type']) {
+            switch ((string) ($resultado['usuario']['user_type'] ?? '')) {
                 case '1':
                     header("Location: ./admin-gestionar-usuarios.php");
                     exit();
@@ -18,6 +18,9 @@
                 case '3':
                     header("Location: ./empresa-visualizar-publicaciones.php");
                     exit();
+                default:
+                    unset($_SESSION['user']);
+                    $error = 'El usuario no tiene un rol válido asignado.';
             }
         } else {
             $error = $resultado['message']; // Mostrar mensaje específico

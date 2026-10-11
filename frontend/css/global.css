@@ -37,3 +37,58 @@ img{
 .star.checked {
   color: #ffc107;
 }
+
+.alumno-progress-item {
+  margin: 0.75rem 0 1rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(72, 88, 45, 0.2);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.alumno-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  color: #344126;
+  font-size: 0.9rem;
+}
+
+.alumno-progress-item .progress {
+  height: 0.55rem;
+  background-color: #dfe5d5;
+}
+
+.alumno-progress-item .progress-bar {
+  background-color: #5d7d3a;
+}
+
+.alumno-progress-details {
+  margin-top: 0.55rem;
+  color: #59634d;
+  font-size: 0.8rem;
+}
+
+.alumno-progress-details summary {
+  cursor: pointer;
+  color: #46642e;
+}
+
+.alumno-progress-details ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.alumno-progress-details a {
+  color: #46642e;
+  text-decoration: none;
+}
+
+.alumno-progress-details a:hover {
+  text-decoration: underline;
+}
+
+.alumno-progress-details p {
+  margin: 0.45rem 0 0;
+}

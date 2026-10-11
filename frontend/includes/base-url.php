@@ -10,7 +10,9 @@ $dotenv->load();
 
 function getBaseUrl(){
     // Asignar las variables de entorno a las propiedades
-    $projectFolder = 'TP-Programacion-WEB/frontend';
+    $projectFolder = PHP_SAPI === 'cli-server'
+        ? 'frontend'
+        : 'TP-Programacion-WEB/frontend';
 
     $currentDir = dirname(__DIR__);
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';

@@ -42,8 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function iniciarSesion(email, password) {
     try {
-        const BASEURL = "localhost:80/Proyecto-Final-Back"
-        const response = await fetch(`http://${BASEURL}/index.php?endpoint=login`, {
+        const response = await fetch('../../controllers/UsuarioController.php?endpoint=login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

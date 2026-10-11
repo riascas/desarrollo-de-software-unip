@@ -325,11 +325,11 @@ class EmpresaDAO {
                 $alumno = new Alumno();
                 $alumno->setId($row['id']);
                 $alumno->setNombreAlumno($row['nombre_alumno']);
-                $alumno->setDescripcion($row['descripcion']);
+                $alumno->setDescripcion($row['descripcion'] ?? '');
                 $alumno->setApellidoAlumno($row['apellido']);
-                $alumno->setFotoPerfil($row['foto_perfil']);
+                $alumno->setFotoPerfil($row['foto_perfil'] ?? '');
                 $carrera = new Carrera();
-                $carrera->setNombreCarrera($row['nombre_carrera']);
+                $carrera->setNombreCarrera($row['nombre_carrera'] ?? '');
                 $alumno->setCarrera($carrera);
     
                 $alumnos[] = $alumno->toArray();

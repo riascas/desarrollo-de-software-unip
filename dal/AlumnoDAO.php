@@ -1,5 +1,5 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/../models/Usuario.php';
 require_once __DIR__ . '/../models/Alumno.php';
 require_once __DIR__ . '/../models/PlanEstudio.php';
@@ -902,6 +902,30 @@ class AlumnoDAO
             } else {
                 return ['success' => false];
             }
+        }
+
+        public function agregarHabilidad($idAlumno, $idHabilidad, $nivelHabilidad = 0)
+        {
+            $queryExiste = "SELECT 1 FROM habilidades_alumnos
+                            WHERE id_usuario = :idAlumno AND id_habilidad = :idHabilidad";
+            $stmtExiste = $this->conn->prepare($queryExiste);
+            $stmtExiste->bindValue(':idAlumno', $idAlumno, PDO::PARAM_INT);
+            $stmtExiste->bindValue(':idHabilidad', $idHabilidad, PDO::PARAM_INT);
+            $stmtExiste->execute();
+
+            if ($stmtExiste->fetchColumn()) {
+                return ['success' => true, 'message' => 'La habilidad ya estaba asociada.'];
+            }
+
+            $query = "INSERT INTO habilidades_alumnos (id_usuario, id_habilidad, nivel_grado)
+                      VALUES (:idAlumno, :idHabilidad, :nivelHabilidad)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':idAlumno', $idAlumno, PDO::PARAM_INT);
+            $stmt->bindValue(':idHabilidad', $idHabilidad, PDO::PARAM_INT);
+            $stmt->bindValue(':nivelHabilidad', $nivelHabilidad, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return ['success' => true, 'message' => 'Habilidad agregada correctamente.'];
         }
 
 

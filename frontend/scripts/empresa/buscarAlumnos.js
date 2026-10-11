@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         
         const query = buscarInput.value.trim();
-        let url = '/TP-Programacion-WEB/controllers/EmpresaController.php?buscarAlumnos=';
+        let url = '../../controllers/EmpresaController.php?buscarAlumnos=';
 
         if (query !== '') {
             url += encodeURIComponent(query);
@@ -17,7 +17,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json()) 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error HTTP ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             const resultadosContainer = document.getElementById('resultadosBusqueda');
             resultadosContainer.innerHTML = '';

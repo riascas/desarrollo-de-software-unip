@@ -65,6 +65,12 @@ elseif($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['eliminarHabilidad']
     $resultado = $alumnoController->eliminarHabilidad();
     return $resultado;
     exit;
+}elseif($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['agregarHabilidad'])){
+    session_start();
+    $alumnoController = new AlumnoController();
+    $resultado = $alumnoController->agregarHabilidad();
+    return $resultado;
+    exit;
 }
 
 class AlumnoController {
@@ -120,7 +126,9 @@ class AlumnoController {
         $telefono = htmlspecialchars($_POST['telefono'] ?? '');
         // $username = $_POST['username'] ? $_POST['username'] : NULL;
         // $habilidades = $_POST['habilidadesSeleccionadas'] ? $_POST['habilidadesSeleccionadas'] : NULL;
-        $habilidadesIds =$_POST['habilidadesSeleccionadas'] ? explode(",", $_POST['habilidadesSeleccionadas']) : [];/////////////////////////////7777
+        $habilidadesIds = !empty($_POST['habilidadesSeleccionadas'])
+            ? array_filter(explode(",", $_POST['habilidadesSeleccionadas']))
+            : [];
         $carrera = htmlspecialchars($_POST['carrera'] ?? '');
         $planEstudios = /*$_POST['planEstudios'] ? $_POST['planEstudios'] : */NULL;
         $materias = /*$_POST['materia'] ? $_POST['materia'] : */NULL;
@@ -480,6 +488,27 @@ class AlumnoController {
                 'success' => false
             ]);
         }
+    }
+
+    public function agregarHabilidad()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $idAlumno = $_SESSION['user']['user_id'];
+        $idHabilidad = filter_var($input['idHabilidad'] ?? null, FILTER_VALIDATE_INT);
+        $nivelHabilidad = filter_var($input['nivelHabilidad'] ?? 0, FILTER_VALIDATE_INT);
+
+        if (!$idHabilidad || $nivelHabilidad < 0 || $nivelHabilidad > 5) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Los datos de la habilidad no son válidos.'
+            ]);
+            return;
+        }
+
+        $response = $this->alumnoDao->agregarHabilidad($idAlumno, $idHabilidad, $nivelHabilidad);
+        http_response_code($response['success'] ? 200 : 500);
+        echo json_encode($response);
     }
 
         

@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Actualizar el campo hidden
         actualizarHabilidadesSeleccionadas();
+        agregarHabilidad(habilidadId, alumnoId);
     });
 
     // Delegar evento "Eliminar" para elementos ya renderizados
@@ -76,62 +77,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Función para agregar habilidad
+    // Función para calificar habilidad (marcar estrellas)
     function agregarHabilidad(habilidadId, alumnoId) {
-        // Obtener el nivel de habilidad (número de estrellas llenas)
-        const habilidadItem = document.querySelector(`.habilidad-item[data-id="${habilidadId}"]`);
-        const nivelHabilidad = habilidadItem.querySelectorAll('.bi-star-fill').length; // Contar las estrellas llenas
-
-        // Enviar AJAX para agregar la habilidad con el nivel de habilidad
-        fetch(`http://localhost/TP-Programacion-WEB/controllers/AlumnoController.php?agregarHabilidad=`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                idAlumno: alumnoId,
-                idHabilidad: habilidadId
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    alert("Error al agregar la habilidad. Intente nuevamente.");
-                }
-            })
-            .catch(() => alert("Error de conexión con el servidor."));
-    }
-
-    // Función para eliminar habilidad
-    function agregarHabilidad(habilidadId, alumnoId) {
-        // Obtener el nivel de habilidad (número de estrellas llenas)
-        const habilidadItem = document.querySelector(`.habilidad-item[data-id="${habilidadId}"]`);
-        const nivelHabilidad = habilidadItem.querySelectorAll('.bi-star-fill').length; // Contar las estrellas llenas
-    
-        // Enviar AJAX para agregar la habilidad con el nivel de habilidad
-        fetch(`http://localhost/TP-Programacion-WEB/controllers/AlumnoController.php?agregarHabilidad=`, {
+        fetch(`../../controllers/AlumnoController.php?agregarHabilidad=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 idAlumno: alumnoId,
                 idHabilidad: habilidadId,
-                nivelHabilidad: nivelHabilidad  // Enviar el nivel de habilidad (incluido 0)
+                nivelHabilidad: 0
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                alert("Error al agregar la habilidad. Intente nuevamente.");
-            }
-        })
-        .catch((error) => {
-            // Solo mostrar el mensaje de error si el nivel de habilidad no es 0
-            if (nivelHabilidad !== 0) {
-                alert("Error de conexión con el servidor.");
-            }
-            // Si el nivel es 0, no mostrar el error
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    throw new Error(data.message || 'No se pudo agregar la habilidad.');
+                }
+            })
+            .catch(error => {
+                document.querySelector(`.habilidad-item[data-id="${habilidadId}"]`)?.remove();
+                actualizarHabilidadesSeleccionadas();
+                alert(error.message || 'Error de conexión con el servidor.');
+            });
     }
 
-    // Función para calificar habilidad (marcar estrellas)
     function calificarHabilidad(star, habilidadId) {
         const habilidadItem = document.querySelector(`.habilidad-item[data-id="${habilidadId}"]`);
         const estrellas = habilidadItem.querySelectorAll('.star');
@@ -163,8 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 nivel_grado: nivelGrado
             });
         });
-
+        habilidadesSeleccionadas.value = habilidadesSeleccionadasData
+            .map(habilidad => habilidad.id_habilidad)
+            .join(",");
     }
+
+    actualizarHabilidadesSeleccionadas();
 });
 
 // Función para eliminar habilidad

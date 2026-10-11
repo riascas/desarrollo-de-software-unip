@@ -41,9 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
         formAlumno.classList.remove('was-validated');
 
         // Mostrar el formulario correspondiente según la selección
-        if (usuarioSeleccionado === 'alumno') {
+        if (usuarioSeleccionado === '2') {
             formAlumno.classList.remove('d-none');
-        } else if (usuarioSeleccionado === 'empresa') {
+        } else if (usuarioSeleccionado === '3') {
             formEmpresa.classList.remove('d-none');
         }
     });
@@ -108,8 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function registrarse(userData) {
     try {
-        const BASEURL = "localhost:80/Proyecto-Final-Back"
-        const response = await fetch(`http://${BASEURL}/index.php?endpoint=register`, {
+        const response = await fetch('../../controllers/UsuarioController.php?endpoint=register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
